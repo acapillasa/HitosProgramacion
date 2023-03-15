@@ -6,7 +6,7 @@ public class hito1 {
         JFrame programa = new JFrame("Try yourself");
 
         programa.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        programa.setSize(800,600);
+        programa.setSize(800,500);
 
 
         JPanel contenedorNorte = new JPanel();
@@ -47,7 +47,6 @@ public class hito1 {
 
         int y = 150;
         contenedorEste.add(Box.createVerticalGlue());
-        contenedorEste.setBorder(BorderFactory.createLineBorder(Color.black));
         JRadioButton[] arrayBotones = {opcion1,opcion2,opcion3};
         ButtonGroup grupoBotones = new ButtonGroup();
         for (int i = 0; i < arrayBotones.length; i++) {
