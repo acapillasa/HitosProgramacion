@@ -1,2 +1,2 @@
 # HitosProgramacion
-#                           Separados por ¡BRANCHS!
+# Separados por ¡BRANCHS!
