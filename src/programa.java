@@ -23,9 +23,8 @@ public class programa extends JFrame implements ActionListener {
     public programa() {
 
 
-        //String contraseña = JOptionPane.showInputDialog(this,"input password", "entrada", JOptionPane.QUESTION_MESSAGE);
-        String contraseña2 = "damocles";
-        if (contraseña2 != null && contraseña2.equals("damocles")) {
+        String contraseña = JOptionPane.showInputDialog(this,"input password", "entrada", JOptionPane.QUESTION_MESSAGE);
+        if (contraseña != null && contraseña.equals("damocles")) {
 
             this.setTitle("Swing - Example 2");
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
