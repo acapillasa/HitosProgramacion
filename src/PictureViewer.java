@@ -7,6 +7,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -24,6 +25,9 @@ public class PictureViewer extends JFrame implements ActionListener {
     private JScrollPane scroll;
     private JLabel imagenLabel;
     private ConexionBD bd;
+    private Date guardarFecha;
+    private SimpleDateFormat fechaTransformacion;
+    private String fechaFormateada;
 
     public PictureViewer() {
 
@@ -61,6 +65,14 @@ public class PictureViewer extends JFrame implements ActionListener {
         fechaPanel = new JPanel();
         fechaPanel.setBorder(new LineBorder(Color.BLUE,2));
         fecha = new JXDatePicker();
+        fecha.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guardarFecha = fecha.getDate();
+                fechaTransformacion = new SimpleDateFormat("yyyy-MM-dd");
+                fechaFormateada = fechaTransformacion.format(guardarFecha);
+            }
+        });
 
 
         // TERCER AREA DEL GRID LAYOUT
@@ -99,6 +111,9 @@ public class PictureViewer extends JFrame implements ActionListener {
                     Image imagenEscalada = imagen.getImage().getScaledInstance(250, 250, Image.SCALE_DEFAULT);
                     imagen = new ImageIcon(imagenEscalada);
                     imagenLabel.setIcon(imagen);
+                    bd.abrirConexion();
+                    bd.icrementarVisitas(nombreFoto);
+                    bd.cerrarConexion();
                 }
             }
         });
@@ -129,15 +144,28 @@ public class PictureViewer extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         try {
             if (e.getSource() == combo) {
-                String fotografoSeleccionado = (String) combo.getSelectedItem();
-                bd.abrirConexion();
-                ArrayList<String> nombresFotos = bd.selectNombreFotosPorFotografo(fotografoSeleccionado);
-                bd.cerrarConexion();
-                modelo.clear();
-                for (int i = 0; i < nombresFotos.size(); i++) {
-                    modelo.addElement(nombresFotos.get(i));
+                if (fechaFormateada == null) {
+                    String fotografoSeleccionado = (String) combo.getSelectedItem();
+                    bd.abrirConexion();
+                    ArrayList<String> nombresFotos = bd.selectNombreFotosPorFotografo(fotografoSeleccionado);
+                    bd.cerrarConexion();
+                    modelo.clear();
+                    for (int i = 0; i < nombresFotos.size(); i++) {
+                        modelo.addElement(nombresFotos.get(i));
+                    }
+                    lista.repaint();
                 }
-                lista.repaint();
+                else {
+                    String fotografoSeleccionado = (String) combo.getSelectedItem();
+                    bd.abrirConexion();
+                    ArrayList<String> nombresFotos = bd.selectNombreFotosPorFotografo(fotografoSeleccionado,fechaFormateada);
+                    bd.cerrarConexion();
+                    modelo.clear();
+                    for (int i = 0; i < nombresFotos.size(); i++) {
+                        modelo.addElement(nombresFotos.get(i));
+                    }
+                    lista.repaint();
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();

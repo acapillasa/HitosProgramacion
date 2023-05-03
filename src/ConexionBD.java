@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -69,35 +70,10 @@ public class ConexionBD {
         return null;
     }
 
-    public ArrayList<String> selectNombreFotografos() {
-        try {
-
-            // Crear la sentencia SQL para seleccionar todos los registros de la tabla "fotografos"
-            String sql = "SELECT nombre FROM fotografos";
-            // Crear el objeto PreparedStatement
-            ps = con.prepareStatement(sql);
-
-            // Ejecutar la consulta y obtener el ResultSet
-            rs = ps.executeQuery();
-
-            ArrayList<String> nombres = new ArrayList<>();
-            // Procesar los resultados del ResultSet
-            while (rs.next()) {
-                String nombre = rs.getString("nombre");
-                nombres.add(nombre);
-            }
-
-            return nombres;
-        } catch (SQLException e) {
-            System.out.println("Error en la consulta: " + e.getMessage());
-        }
-        return null;
-    }
-
     public ArrayList<String> selectNombreFotos() {
         try {
 
-            // Crear la sentencia SQL para seleccionar todos los registros de la tabla "fotografos"
+
             String sql = "SELECT titulo FROM fotos";
             // Crear el objeto PreparedStatement
             ps = con.prepareStatement(sql);
@@ -119,7 +95,7 @@ public class ConexionBD {
         return null;
     }
 
-    public ArrayList<String> selectNombreFotosPorFotografo(String nombreFotografo) throws SQLException {
+    public ArrayList<String> selectNombreFotosPorFotografo(String nombreFotografo) {
         ArrayList<String> nombresFotos = new ArrayList<>();
 
         try {
@@ -133,6 +109,31 @@ public class ConexionBD {
             e.printStackTrace();
         }
         return nombresFotos;
+    }
+    public ArrayList<String> selectNombreFotosPorFotografo(String nombreFotografo, String fecha) {
+        ArrayList<String> nombresFotos = new ArrayList<>();
+
+        try {
+            ps = con.prepareStatement("SELECT titulo FROM fotos JOIN fotografos ON fotos.fotografoId = fotografos.fotografoId WHERE fotografos.nombre = ? and fotos.fecha >= ?");
+            ps.setString(1, nombreFotografo);
+            ps.setString(2, fecha);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                nombresFotos.add(rs.getString("titulo"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return nombresFotos;
+    }
+    void icrementarVisitas(String imagen) {
+        try {
+            ps = con.prepareStatement("UPDATE fotos SET visitas = visitas + 1 WHERE titulo = ?");
+            ps.setString(1,imagen);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 
