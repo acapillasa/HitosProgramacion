@@ -1,5 +1,4 @@
-import java.security.PrivateKey;
-import java.util.ArrayList;
+import java.util.List;
 
 public class Fotografos extends ConexionBD {
     private int fotografoId;
@@ -16,7 +15,7 @@ public class Fotografos extends ConexionBD {
     }
 
     @Override
-    public ArrayList<Fotografos> selectFotografos() {
+    public List<Fotografos> selectFotografos() {
         return super.selectFotografos();
     }
 
@@ -36,9 +35,5 @@ public class Fotografos extends ConexionBD {
 
     public String getNombre() {
         return nombre;
-    }
-
-    public boolean isGalardonado() {
-        return galardonado;
     }
 }

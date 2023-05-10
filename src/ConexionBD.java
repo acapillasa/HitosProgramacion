@@ -1,16 +1,50 @@
-import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ConexionBD {
 
 
-        static Connection con;
-        static Statement st;
-        static ResultSet rs;
-        static PreparedStatement ps;
+        private Connection con;
+        private Statement st;
+        private ResultSet rs;
+        private PreparedStatement ps;
 
-        public void abrirConexion() {
+    public Connection getCon() {
+        return con;
+    }
+
+    public void setCon(Connection con) {
+        this.con = con;
+    }
+
+    public Statement getSt() {
+        return st;
+    }
+
+    public void setSt(Statement st) {
+        this.st = st;
+    }
+
+    public ResultSet getRs() {
+        return rs;
+    }
+
+    public void setRs(ResultSet rs) {
+        this.rs = rs;
+    }
+
+    public PreparedStatement getPs() {
+        return ps;
+    }
+
+    public void setPs(PreparedStatement ps) {
+        this.ps = ps;
+    }
+
+    void abrirConexion() {
             try {
                 String userName="zubiri";
                 String password="zubiri";
@@ -25,23 +59,24 @@ public class ConexionBD {
         }
 
         //Para cerrar la conexión una vez terminadas las consultas
-        public void cerrarConexion() {
-            try {
-                // Cerrar el ResultSet, el objeto PreparedStatement y la conexión
-                rs.close();
-                ps.close();
-                con.close();
-                System.out.println("Conexión cerrada");
-            }
-            catch (SQLException e) {
-                System.out.println("Error al cerrar conexión");
-            }
+    void cerrarConexion() {
+        try {
+            // Cerrar el ResultSet, el objeto PreparedStatement y la conexión
+            rs.close();
+            ps.close();
+            con.close();
+            System.out.println("Conexión cerrada");
         }
+        catch (SQLException e) {
+            System.out.println("Error al cerrar conexión");
+        }
+    }
 
-    public ArrayList<Fotografos> selectFotografos() {
+
+     List<Fotografos> selectFotografos() {
         try {
 
-            ArrayList<Fotografos> fotografosList = new ArrayList<>();
+            List<Fotografos> fotografosList = new ArrayList<>();
 
             // Crear la sentencia SQL para seleccionar todos los registros de la tabla "fotografos"
             String sql = "SELECT * FROM fotografos";
@@ -70,7 +105,7 @@ public class ConexionBD {
         return null;
     }
 
-    public ArrayList<String> selectNombreFotos() {
+    List<String> selectNombreFotos() {
         try {
 
 
@@ -81,7 +116,7 @@ public class ConexionBD {
             // Ejecutar la consulta y obtener el ResultSet
             rs = ps.executeQuery();
 
-            ArrayList<String> nombres = new ArrayList<>();
+            List<String> nombres = new ArrayList<>();
             // Procesar los resultados del ResultSet
             while (rs.next()) {
                 String nombre = rs.getString("titulo");
@@ -95,8 +130,8 @@ public class ConexionBD {
         return null;
     }
 
-    public ArrayList<String> selectNombreFotosPorFotografo(String nombreFotografo) {
-        ArrayList<String> nombresFotos = new ArrayList<>();
+    List<String> selectNombreFotosPorFotografo(String nombreFotografo) {
+        List<String> nombresFotos = new ArrayList<>();
 
         try {
             ps = con.prepareStatement("SELECT titulo FROM fotos JOIN fotografos ON fotos.fotografoId = fotografos.fotografoId WHERE fotografos.nombre = ?");
@@ -110,8 +145,9 @@ public class ConexionBD {
         }
         return nombresFotos;
     }
-    public ArrayList<String> selectNombreFotosPorFotografo(String nombreFotografo, String fecha) {
-        ArrayList<String> nombresFotos = new ArrayList<>();
+
+    List<String> selectNombreFotosPorFotografo(String nombreFotografo, String fecha) {
+        List<String> nombresFotos = new ArrayList<>();
 
         try {
             ps = con.prepareStatement("SELECT titulo FROM fotos JOIN fotografos ON fotos.fotografoId = fotografos.fotografoId WHERE fotografos.nombre = ? and fotos.fecha >= ?");
@@ -126,6 +162,7 @@ public class ConexionBD {
         }
         return nombresFotos;
     }
+
     void icrementarVisitas(String imagen) {
         try {
             ps = con.prepareStatement("UPDATE fotos SET visitas = visitas + 1 WHERE titulo = ?");
@@ -136,12 +173,123 @@ public class ConexionBD {
         }
     }
 
+    int visitasFotografo(int idFotografo) {
+        int visitasTotales = 0;
+        try {
+            ps = con.prepareStatement("SELECT sum(visitas) FROM fotos where fotografoId = ?");
+            ps.setInt(1,idFotografo);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                visitasTotales = rs.getInt("sum(visitas)");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return visitasTotales;
+    }
+
+    Map<Integer, Integer> createVisitasMap() {
+        Map<Integer, Integer> mapa = new HashMap<>();
+        List<Fotografos> listaFotografos = selectFotografos();
+
+        for (int i = 0; i < listaFotografos.size(); i++) {
+            mapa.put(listaFotografos.get(i).getFotografoId(),visitasFotografo(listaFotografos.get(i).getFotografoId()));
+        }
+        return mapa;
+    }
+
+    List<Integer> listaNoPremiados() {
+        List<Integer> listaNo = new ArrayList<>();
+        try {
+            ps = con.prepareStatement("SELECT fotografoId FROM fotografos WHERE galardonado = 0");
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                listaNo.add(rs.getInt("fotografoId"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return listaNo;
+    }
+    Map<Integer,String> fotosNo(List<Integer> lista) {
+        Map<Integer,String> mapaNo = new HashMap<>();
+        try {
+            for (int i = 0; i < lista.size(); i++) {
+                ps = con.prepareStatement("SELECT fotosId,titulo FROM fotos WHERE fotografoId = ? AND visitas = 0");
+                ps.setInt(1,lista.get(i));
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    mapaNo.put(rs.getInt("fotosId"),rs.getString("titulo"));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mapaNo;
+    }
+
+    void eliminarFoto(int id) {
+        try {
+            ps = con.prepareStatement("DELETE FROM fotos WHERE fotosId = ?");
+            ps.setInt(1,id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    int fotografoSinFotos(int id) {
+        int filas = 0;
+        try {
+            ps = con.prepareStatement("SELECT * FROM fotos WHERE fotografoId = ?");
+            ps.setInt(1,id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                filas++;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return filas;
+    }
+
+    void eliminarFotografo(int id) {
+        try {
+            ps = con.prepareStatement("DELETE FROM fotografos WHERE fotografoId = ?");
+            ps.setInt(1,id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    int idFotografoConIdFoto(int id) {
+        int idFotografo = 0;
+        try {
+            ps = con.prepareStatement("SELECT fotografoId FROM fotos WHERE fotosId = ?");
+            ps.setInt(1,id);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                idFotografo = rs.getInt("fotografoId");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return idFotografo;
+    }
+
 
 
     public static void main(String[] args) {
         ConexionBD cone = new ConexionBD();
         cone.abrirConexion();
-        cone.selectNombreFotos();
+
+        for (int id: cone.createVisitasMap().keySet()) {
+            System.out.println("IdFotografo: " + id + " Visitas: " + cone.createVisitasMap().get(id));
+        }
         cone.cerrarConexion();
     }
 
