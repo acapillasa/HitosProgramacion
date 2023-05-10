@@ -38,7 +38,7 @@ CREATE TABLE `fotografos` (
 
 LOCK TABLES `fotografos` WRITE;
 /*!40000 ALTER TABLE `fotografos` DISABLE KEYS */;
-INSERT INTO `fotografos` VALUES (1,'luffy',1),(2,'zoro',1),(3,'nami',0),(4,'usopp',0),(5,'brook',1);
+INSERT INTO `fotografos` VALUES (1,'luffy',1),(2,'zoro',1),(3,'nami',0),(4,'usopp',1),(5,'brook',0);
 /*!40000 ALTER TABLE `fotografos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -59,7 +59,7 @@ CREATE TABLE `fotos` (
   PRIMARY KEY (`fotosId`),
   KEY `fotografoId` (`fotografoId`),
   CONSTRAINT `fotos_ibfk_1` FOREIGN KEY (`fotografoId`) REFERENCES `fotografos` (`fotografoId`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +68,7 @@ CREATE TABLE `fotos` (
 
 LOCK TABLES `fotos` WRITE;
 /*!40000 ALTER TABLE `fotos` DISABLE KEYS */;
-INSERT INTO `fotos` VALUES (1,'cartelLuffy','2000-05-05','cartelLuffy.jpg',300000000,1),(2,'cartelZoro','2000-04-04','cartelZoro.jpg',120000000,2),(3,'cartelNami','2000-03-03','cartelNami.jpg',16000000,3),(4,'cartelSogeking','2000-02-02','cartelLuffy.jpg',30000000,4),(5,'cartelBrook','2000-01-01','cartelBrook.jpg',33000000,5),(6,'cartelLuffy2','2022-09-22','cartelLuffy2.jpg',1500000000,1),(7,'cartelZoro2','2022-10-15','cartelZoro2.jpg',320000000,2),(8,'cartelNami2','2022-11-13','cartelNami2.jpg',66000000,3),(9,'cartelSogeking2','2022-10-25','cartelSogeking2.jpg',200000000,4),(10,'cartelBrook2','2022-10-16','cartelBrook2.jpg',83000000,5);
+INSERT INTO `fotos` VALUES (1,'cartelLuffy','2000-05-05','cartelLuffy.jpg',300000007,1),(2,'cartelZoro','2000-04-04','cartelZoro.jpg',120000003,2),(3,'cartelNami','2000-03-03','cartelNami.jpg',0,3),(4,'cartelSogeking','2000-02-02','cartelLuffy.jpg',30000001,4),(5,'cartelBrook','2000-01-01','cartelBrook.jpg',33000000,5),(6,'cartelLuffy2','2022-09-22','cartelLuffy2.jpg',1500000002,1),(7,'cartelZoro2','2022-10-15','cartelZoro2.jpg',320000000,2),(8,'cartelNami2','2022-11-13','cartelNami2.jpg',0,3),(9,'cartelSogeking2','2022-10-25','cartelSogeking2.jpg',200000001,4),(10,'cartelBrook2','2022-10-16','cartelBrook2.jpg',83000000,5);
 /*!40000 ALTER TABLE `fotos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -81,4 +81,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-23 12:01:33
+-- Dump completed on 2023-05-10 20:25:16
